@@ -83,11 +83,25 @@ func main() {
 			yOffset := yOffsets[x - 1]
 			tailLength := tailLengths[x - 1]
 
+			if yOffset + 1 >= screenH {
+				yOffset = screenH - 1
+
+				if tailLength > 0 {
+					tailLength -= 1
+					tailLengths[x - 1] = tailLength
+				} else {
+					yOffsets[x - 1] = 0
+					tailLengths[x - 1] = rand.Intn(screenH - 2)
+				}
+			}
+
 			for y < screenH {
 				SetCursor(&buffer, x, y)
 				SetBackgroundColor(&buffer, 0, 0, 0)
-
-				if y <= yOffset + 1 && y >= yOffset - tailLength + 2  {
+				
+				if y == yOffset + 1 {
+					SetForegroundColor(&buffer, 0, 255, 0)
+				} else if y <= yOffset + 1 && y >= yOffset - tailLength + 2  {
 					SetForegroundColor(&buffer, 3, 160, 98)
 				} else {
 					SetForegroundColor(&buffer, 20, 20, 20)
@@ -99,8 +113,8 @@ func main() {
 				charOffset = (charOffset + 1) % 95
 				y += 1
 			}
-
-			yOffsets[x - 1] = (yOffset + 1) % screenH
+			
+			yOffsets[x - 1] += 1
 			x += 2
 		}
 
